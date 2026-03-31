@@ -1,3 +1,4 @@
+https://docs.google.com/document/d/1lTWbcfkO1cjebgXodPubM4Hi_KfrA5CwIQ_SiUrpgqI/edit?tab=t.0
 NORMALIZAÇÃO
 
 PEDIDOS (NUMERO, DATA, NOME, ENDERECO, TELEFONE,
