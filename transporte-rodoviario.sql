@@ -4,8 +4,6 @@ create database rodoviario
 use rodoviario
 go
 
--- excluir tabelas existentes (ordem respeita as chaves estrangeiras)
-
 drop table if exists passagens
 drop table if exists viagens
 drop table if exists passageiros
@@ -17,78 +15,77 @@ drop table if exists tipos
 
 
 
--- criacao das tabelas
+-- criacao
 
--- convencional, executivo, semi-leito, leito, leito-cama ...
 create table tipos(
-	id        int          identity primary key,
-	descricao varchar(50)  not null unique
+	id int identity primary key,
+	descricao varchar(50) not null unique
 )
 
 create table cidades(
-	id     int          identity primary key,
+	id int identity primary key,
 	cidade varchar(100) not null,
-	uf     char(2)      not null,
+	uf char(2) not null,
 	constraint uq_cidades unique (cidade, uf)
 )
 
 create table linhas(
-	id           int           identity primary key,
-	cidorigemid  int           not null,
-	ciddestinoid int           not null,
-	kms          decimal(8,2)  not null,
-	constraint fklinhas_origem  foreign key (cidorigemid)  references cidades(id),
+	id int identity primary key,
+	cidorigemid  int not null,
+	ciddestinoid int not null,
+	kms decimal(8,2)  not null,
+	constraint fklinhas_origem foreign key (cidorigemid)  references cidades(id),
 	constraint fklinhas_destino foreign key (ciddestinoid) references cidades(id)
 )
 
 create table carros(
-	id         int      identity primary key,
-	placa      char(8)  not null unique,
+	id int identity primary key,
+	placa char(8) not null unique,
 	capacidade smallint not null,
-	tipoid     int      not null,
+	tipoid int not null,
 	constraint fkcarros_tipos foreign key (tipoid) references tipos(id)
 )
 
 create table motoristas(
-	id      int           identity primary key,
-	nome    varchar(100)  not null,
-	cnh     varchar(11)   not null unique,
-	celular varchar(15)   null,
-	cpf     char(11)      not null unique,
-	rg      varchar(12)   not null unique,
-	email   varchar(100)  null
+	id int identity primary key,
+	nome varchar(100) not null,
+	cnh varchar(11) not null unique,
+	celular varchar(15) null,
+	cpf char(11) not null unique,
+	rg varchar(12) not null unique,
+	email varchar(100) null
 )
 
 create table passageiros(
-	cpf            char(11)     primary key,
-	nome           varchar(100) not null,
-	celular        varchar(15)  null,
-	contato        varchar(100) null,
-	celularcontato varchar(15)  null
+	cpf char(11) primary key,
+	nome varchar(100) not null,
+	celular varchar(15) null,
+	contato varchar(100) null,
+	celularcontato varchar(15) null
 )
 
 create table viagens(
-	id          int           identity primary key,
-	linhaid     int           not null,
-	data        date          not null,
-	hora        time          not null,
-	tarifa      decimal(8,2)  not null,
-	taxa        decimal(8,2)  not null default 0,
-	carroid     int           not null,
-	motoristaid int           not null,
-	constraint fkviagens_linhas     foreign key (linhaid)     references linhas(id),
-	constraint fkviagens_carros     foreign key (carroid)     references carros(id),
+	id int identity primary key,
+	linhaid int not null,
+	data date not null,
+	hora time not null,
+	tarifa decimal(8,2) not null,
+	taxa decimal(8,2)  not null default 0,
+	carroid int not null,
+	motoristaid int not null,
+	constraint fkviagens_linhas foreign key (linhaid) references linhas(id),
+	constraint fkviagens_carros foreign key (carroid) references carros(id),
 	constraint fkviagens_motoristas foreign key (motoristaid) references motoristas(id)
 )
 
 create table passagens(
-	id           int      identity primary key,
-	viagemid     int      not null,
-	poltrona     smallint not null,
+	id int identity primary key,
+	viagemid int not null,
+	poltrona smallint not null,
 	passageiroid char(11) not null,
 	-- mesma poltrona nao pode ser vendida duas vezes na mesma viagem
 	constraint uq_passagens_viagem_poltrona unique (viagemid, poltrona),
-	constraint fkpassagens_viagens     foreign key (viagemid)     references viagens(id),
+	constraint fkpassagens_viagens foreign key (viagemid) references viagens(id),
 	constraint fkpassagens_passageiros foreign key (passageiroid) references passageiros(cpf)
 )
 go
